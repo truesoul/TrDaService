@@ -29,16 +29,17 @@ package com.mtag.trafficservice.tools;
  */
 public class XmlServiceException extends Exception {
 
-    public XmlServiceException() {
-    }
+	private static final long serialVersionUID = -4224597078564069223L;
 
-    public XmlServiceException(String message) {
-        super(message);
-    }
+	public XmlServiceException() {
+	}
 
-    public XmlServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-    
-    
+	public XmlServiceException(String message) {
+		super(message);
+	}
+
+	public XmlServiceException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }
