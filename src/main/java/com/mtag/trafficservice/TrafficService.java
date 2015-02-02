@@ -153,12 +153,12 @@ public class TrafficService {
                 }
                 if (node.getNodeName().equals("summary"))
                 {
-                    trafficItem.setDescription(
-                            node.getTextContent()
-                                    .trim());
+                    String summary=node.getTextContent().trim();
+                    trafficItem.setDescription(summary);
+                    
                     for (TrafficType type: TrafficType.values())
                     {
-                        if (TrafficTypeFilter.matches(type, trafficItem.getDescription()))
+                        if (TrafficTypeFilter.matches(type, summary))
                         {
                             trafficItem.setType(type);
                             break;

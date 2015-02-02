@@ -35,8 +35,9 @@ public class TrafficItem implements Serializable {
     private String description;
     private double longitude, latitude;
     private TrafficType type;
-    private int km;
+    private int lengthKm;
     private int delayMinutes;
+    private int maxSpeedKmh;
 
     public TrafficItem() {
         street="";
@@ -45,7 +46,7 @@ public class TrafficItem implements Serializable {
         longitude=0;
         latitude=0;
         type=TrafficType.NONE;
-        km=0;
+        lengthKm=0;
         delayMinutes=0;
     }
 
@@ -97,12 +98,12 @@ public class TrafficItem implements Serializable {
         this.type = type;
     }
 
-    public int getKm() {
-        return km;
+    public int getLengthKm() {
+        return lengthKm;
     }
 
-    public void setKm(int km) {
-        this.km = km;
+    public void setLengthKm(int lengthKm) {
+        this.lengthKm = lengthKm;
     }
 
     public int getDelayMinutes() {
@@ -113,9 +114,17 @@ public class TrafficItem implements Serializable {
         this.delayMinutes = delayMinutes;
     }
 
+    public int getMaxSpeedKmh() {
+        return maxSpeedKmh;
+    }
+
+    public void setMaxSpeedKmh(int maxSpeedKmh) {
+        this.maxSpeedKmh = maxSpeedKmh;
+    }
+
     @Override
     public String toString() {
-        return "TrafficItem{" + "street=" + street + ", direction=" + direction + ", description=" + description + ", longitude=" + longitude + ", altitude=" + latitude + ", type=" + type + ", km=" + km + ", delayMinutes=" + delayMinutes + '}';
+        return "TrafficItem{" + "street=" + street + ", direction=" + direction + ", description=" + description + ", longitude=" + longitude + ", altitude=" + latitude + ", type=" + type + ", km=" + lengthKm + ", delayMinutes=" + delayMinutes + '}';
     }
     
 }
