@@ -101,6 +101,30 @@ public class TrafficService {
         return result;
     }
 
+    private int parseNumber(String summary, String pattern)
+    {
+        int index=summary.toLowerCase().indexOf(pattern);
+        if (index>=0)
+        {
+            int index0=index-2;
+            while (index0>=0 && Character.isDigit(summary.charAt(index0)))
+            {
+                index0--;
+            }
+            if (index0>=0)
+            {
+                String n=summary.substring(index0+1, index-1);
+                try {
+                    return new Integer(n);
+                }
+                catch (NumberFormatException ex) {
+                    System.out.println("Number format exception: ["+n+"]");
+                }
+            }
+        }
+        return -1;        
+    }
+    
     public TrafficData requestFreiefahrtTraffic() throws XmlServiceException {
         TrafficData result = new TrafficData();
         Document document = XmlTools.requestXmlService(freiefahrtTrafficServiceUrl);
@@ -155,6 +179,9 @@ public class TrafficService {
                 {
                     String summary=node.getTextContent().trim();
                     trafficItem.setDescription(summary);
+                    trafficItem.setMaxSpeedKmh(parseNumber(summary,"km/h"));
+                    trafficItem.setDelayMinutes(parseNumber(summary,"minuten"));
+                    trafficItem.setLengthKm(parseNumber(summary,"km stau"));
                     
                     for (TrafficType type: TrafficType.values())
                     {
