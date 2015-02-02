@@ -26,6 +26,7 @@ package com.mtag.trafficservice;
 import com.mtag.trafficservice.model.TrafficData;
 import com.mtag.trafficservice.model.TrafficItem;
 import com.mtag.trafficservice.model.TrafficType;
+import com.mtag.trafficservice.model.TrafficTypeFilter;
 import com.mtag.trafficservice.tools.XmlServiceException;
 import com.mtag.trafficservice.tools.XmlTools;
 import java.text.DateFormat;
@@ -157,7 +158,7 @@ public class TrafficService {
                                     .trim());
                     for (TrafficType type: TrafficType.values())
                     {
-                        if (type.matches(trafficItem.getDescription()))
+                        if (TrafficTypeFilter.matches(type, trafficItem.getDescription()))
                         {
                             trafficItem.setType(type);
                             break;
