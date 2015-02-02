@@ -51,7 +51,6 @@ public class TrafficController {
     public void setBufferedTrafficService(BufferedTrafficService bufferedTrafficService) {
         this.bufferedTrafficService = bufferedTrafficService;
     }
-
     
     @RequestMapping(value="/restTrafficService")
     public TrafficData RestTrafficService (

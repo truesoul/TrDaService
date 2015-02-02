@@ -23,6 +23,7 @@
  */
 package com.mtag.trafficservice.model;
 
+import com.mtag.traffic.model.TrafficItem;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

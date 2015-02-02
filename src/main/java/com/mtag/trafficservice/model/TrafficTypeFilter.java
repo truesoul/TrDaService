@@ -1,5 +1,6 @@
 package com.mtag.trafficservice.model;
 
+import com.mtag.traffic.model.TrafficType;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -23,9 +23,9 @@
  */
 package com.mtag.trafficservice;
 
+import com.mtag.traffic.model.TrafficItem;
+import com.mtag.traffic.model.TrafficType;
 import com.mtag.trafficservice.model.TrafficData;
-import com.mtag.trafficservice.model.TrafficItem;
-import com.mtag.trafficservice.model.TrafficType;
 import com.mtag.trafficservice.model.TrafficTypeFilter;
 import com.mtag.trafficservice.tools.XmlServiceException;
 import com.mtag.trafficservice.tools.XmlTools;
@@ -111,7 +111,7 @@ public class TrafficService {
             {
                 index0--;
             }
-            if (index0>=0)
+            if (Character.isDigit(summary.charAt(index0+1)))
             {
                 String n=summary.substring(index0+1, index-1);
                 try {
@@ -179,9 +179,9 @@ public class TrafficService {
                 {
                     String summary=node.getTextContent().trim();
                     trafficItem.setDescription(summary);
-                    trafficItem.setMaxSpeedKmh(parseNumber(summary,"km/h"));
+                    trafficItem.setMaxSpeed(parseNumber(summary,"km/h"));
                     trafficItem.setDelayMinutes(parseNumber(summary,"minuten"));
-                    trafficItem.setLengthKm(parseNumber(summary,"km stau"));
+                    trafficItem.setKilometer(parseNumber(summary,"km stau"));
                     
                     for (TrafficType type: TrafficType.values())
                     {
