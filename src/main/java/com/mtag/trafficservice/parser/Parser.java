@@ -57,9 +57,9 @@ public class Parser {
         countries.put("TH","thüringen");
     }
     
-    public List<ParseItem> tokenize(String s)
+    public TokenizedUserInput tokenize(String s)
     {
-        List<ParseItem> result=new ArrayList<>();
+        TokenizedUserInput result=new TokenizedUserInput();
         String[] words = s.split("\\s");
         Token[] tokens = Token.values();
         for (String w: words)
@@ -82,11 +82,11 @@ public class Parser {
         return result;
     }
     
-    public List<ParseItem> parseUserInput(String s)
+    public TokenizedUserInput parseUserInput(String s)
     {
         
         ParseItem actualItem=null;
-        List<ParseItem> result=new ArrayList<>();
+        TokenizedUserInput result=new TokenizedUserInput();
         for (ParseItem item:tokenize(s))
         {
             switch (item.getToken())
@@ -129,9 +129,20 @@ public class Parser {
         return result;
     }
    
-    public boolean matchesTrafficItem(TrafficItem item, List<ParseItem> parseItems)
+    public List<TokenizedUserInput> parseUserMultiInput(String input)
     {
-        for (ParseItem parseItem: parseItems)
+        List<TokenizedUserInput> result = new ArrayList<>();
+        String[] inputStrings=input.split(",");
+        for (String inputString: inputStrings)
+        {
+            result.add(parseUserInput(inputString.trim()));
+        }
+        return result;
+    }
+    
+    public boolean matchesTrafficItem(TrafficItem item, TokenizedUserInput tokenizedUserInput)
+    {
+        for (ParseItem parseItem: tokenizedUserInput)
         {
             switch (parseItem.getToken())
             {
@@ -185,7 +196,19 @@ public class Parser {
         return true;
     }
     
-    public TrafficData filter(TrafficData trafficData, List<ParseItem> parseItems)
+    public boolean matchesTrafficItem(TrafficItem trafficItem, List<TokenizedUserInput> tokenizedUserInputList)
+    {
+        for (TokenizedUserInput tokenizedUserInput: tokenizedUserInputList)
+        {
+            if (matchesTrafficItem(trafficItem, tokenizedUserInput))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public TrafficData filter(TrafficData trafficData, TokenizedUserInput parseItems)
     {
         TrafficData result = new TrafficData();
         result.setCopyright(trafficData.getCopyright());
@@ -200,6 +223,21 @@ public class Parser {
         return result;
     }
     
+    public TrafficData filter(TrafficData trafficData, List<TokenizedUserInput> tokenizedUserInputList)
+    {
+        TrafficData result = new TrafficData();
+        result.setCopyright(trafficData.getCopyright());
+        result.setLastUpdated(trafficData.getLastUpdated());
+        for (TrafficItem trafficItem: trafficData.getTrafficItems())
+        {
+            if (matchesTrafficItem(trafficItem, tokenizedUserInputList))
+            {
+                result.addTrafficItem(trafficItem);
+            }
+        }
+        return result;
+    }
+
 //    public static void main(String[] args)
 //    {
 //        try {

@@ -27,6 +27,7 @@ import com.mtag.trafficservice.model.BufferedTrafficService;
 import com.mtag.trafficservice.model.TrafficData;
 import com.mtag.trafficservice.parser.ParseItem;
 import com.mtag.trafficservice.parser.Parser;
+import com.mtag.trafficservice.parser.TokenizedUserInput;
 import com.mtag.trafficservice.tools.XmlServiceException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class TrafficController {
     {
         try {
             Parser parser = new Parser();
-            List<ParseItem> input = parser.parseUserInput(userInput);
+            List<TokenizedUserInput> input = parser.parseUserMultiInput(userInput);
             TrafficData data = parser.filter(bufferedTrafficService.getTrafficData(),input);
             return data;
         } catch (XmlServiceException ex) {
