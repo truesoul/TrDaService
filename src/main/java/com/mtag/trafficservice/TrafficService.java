@@ -161,12 +161,12 @@ public class TrafficService {
                         if (its[1].contains("Richtung"))
                         {
                             String[] d=its[1].split("Richtung");
-                            trafficItem.setDirection(d[d.length-1].trim());
+                            trafficItem.setDirection("Richtung "+d[d.length-1].trim());
                         }
                         else if (its[1].contains("-"))
                         {
                             String[] d=its[1].split("-");
-                            trafficItem.setDirection(d[d.length-1].trim());
+                            trafficItem.setDirection("Richtung "+d[d.length-1].trim());
                         }
                         else
                         {

@@ -13,8 +13,9 @@ public class TrafficTypeFilter {
         filterPattern.put(TrafficType.ROAD_WORKS, new String[] {".*baustellen?.*", ".*straßenarbeiten.*"});
         filterPattern.put(TrafficType.TRAFFIC_JAM, new String[] {".*staus?.*",".*gestaut.*"});
         filterPattern.put(TrafficType.SLOW_MOVING, new String[] {".*stockend(er)?.*"});
-        filterPattern.put(TrafficType.PARTICAL_CLOSURE, new String[] {".*teilsperrung(en)?.*",".*teil(s\\w+)?gesperrt.*",".*sperrung.*fahrstreifen.*"});
-        filterPattern.put(TrafficType.CLOSURE, new String[] {".*sperrung(en)?.*",".*vollsperrung(en)?.*",".*gesperrt.*"});
+        filterPattern.put(TrafficType.PARTICAL_CLOSURE, new String[] {".*teilsperrung(en)?.*",".*teil(s\\w+)?gesperrt.*",".*sperrung.*fahrstreifen.*",".*fahrstreifen.*gesperrt.*",
+                ".*teil(s\\w+)?blockiert.*",".*sperrung.*fahrstreifen.*",".*fahrstreifen.*blockiert.*"});
+        filterPattern.put(TrafficType.CLOSURE, new String[] {".*sperrung(en)?.*",".*vollsperrung(en)?.*",".*gesperrt.*",".*blockiert.*"});
         filterPattern.put(TrafficType.DANGER, new String[] {".*gefahr(en)?.*"});
         filterPattern.put(TrafficType.NONE, new String[] {".*"});
     }
