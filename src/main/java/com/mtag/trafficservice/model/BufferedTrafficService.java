@@ -23,8 +23,10 @@
  */
 package com.mtag.trafficservice.model;
 
+import com.mtag.traffic.model.TrafficData;
 import com.mtag.trafficservice.TrafficService;
 import com.mtag.trafficservice.tools.XmlServiceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

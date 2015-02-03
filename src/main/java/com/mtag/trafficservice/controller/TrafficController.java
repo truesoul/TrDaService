@@ -23,13 +23,15 @@
  */
 package com.mtag.trafficservice.controller;
 
+import com.mtag.traffic.model.TrafficData;
 import com.mtag.trafficservice.model.BufferedTrafficService;
-import com.mtag.trafficservice.model.TrafficData;
 import com.mtag.trafficservice.parser.ParseItem;
 import com.mtag.trafficservice.parser.Parser;
 import com.mtag.trafficservice.parser.TokenizedUserInput;
 import com.mtag.trafficservice.tools.XmlServiceException;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

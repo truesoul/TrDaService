@@ -23,16 +23,18 @@
  */
 package com.mtag.trafficservice;
 
+import com.mtag.traffic.model.TrafficData;
 import com.mtag.traffic.model.TrafficItem;
 import com.mtag.traffic.model.TrafficType;
-import com.mtag.trafficservice.model.TrafficData;
 import com.mtag.trafficservice.model.TrafficTypeFilter;
 import com.mtag.trafficservice.tools.XmlServiceException;
 import com.mtag.trafficservice.tools.XmlTools;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

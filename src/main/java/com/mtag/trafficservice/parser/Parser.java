@@ -23,9 +23,10 @@
  */
 package com.mtag.trafficservice.parser;
 
+import com.mtag.traffic.model.TrafficData;
 import com.mtag.traffic.model.TrafficItem;
 import com.mtag.traffic.model.TrafficType;
-import com.mtag.trafficservice.model.TrafficData;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
