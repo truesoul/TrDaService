@@ -36,6 +36,8 @@ import com.mtag.traffic.model.TrafficData;
 import com.mtag.traffic.model.TrafficItem;
 import com.mtag.traffic.model.TrafficType;
 import com.mtag.trafficservice.model.TrafficTypeFilter;
+import com.mtag.trafficservice.parser.RegexConverter;
+import com.mtag.trafficservice.parser.RegexKeys;
 import com.mtag.trafficservice.tools.XmlServiceException;
 import com.mtag.trafficservice.tools.XmlTools;
 
@@ -174,6 +176,20 @@ public class TrafficService {
 							break;
 						}
 					}
+
+					RegexConverter converter = RegexConverter.build(
+							RegexKeys.KILOMETER_KEY, summary.toLowerCase(),
+							"km", " ");
+					trafficItem.setKilometer(converter.getInteger());
+
+					converter = RegexConverter.build(RegexKeys.MAX_SPEED_KEY,
+							summary.toLowerCase(), "km/h", " ");
+					trafficItem.setMaxSpeed(converter.getInteger());
+
+					converter = RegexConverter.build(RegexKeys.DELAY_KEY,
+							summary.toLowerCase(), "minuten", " ");
+					trafficItem.setDelayMinutes(converter.getInteger());
+
 				}
 				if (node.getNodeName().equals("link")) {
 					String[] its = node.getAttributes().getNamedItem("href")
