@@ -89,8 +89,61 @@ public class TrafficService {
 					trafficItem.setStreet(node.getTextContent());
 				}
 				if (node.getNodeName().equals("description")) {
-					trafficItem.setDescription(node.getTextContent().trim()
-							.replace("<br />", " ").replace("  ", " "));
+					String description = node.getTextContent().trim();
+					trafficItem.setDescription(description.replace("<br />",
+							" ").replace("  ", " "));
+
+					for (TrafficType type : TrafficType.values()) {
+						if (TrafficTypeFilter.matches(type, description)) {
+							trafficItem.setType(type);
+							break;
+						}
+					}
+					String[] split = description.split("<br />");
+					if (split != null && split.length > 0) {
+						for (String text : split) {
+							if (text.contains("Richtung")) {
+								String[] d = text.split("Richtung");
+								for (int arrayIndex = 0; arrayIndex < d.length; arrayIndex++) {
+									switch (arrayIndex) {
+									case 0:
+										trafficItem
+												.setDirectionFrom(d[arrayIndex]
+														.trim());
+										break;
+									case 1:
+										trafficItem
+												.setDirectionTo(d[arrayIndex]
+														.trim());
+										break;
+									}
+								}
+								break;
+							} else if (text.contains("-")) {
+								String[] d = text.split("-");
+								for (int arrayIndex = 0; arrayIndex < d.length; arrayIndex++) {
+									switch (arrayIndex) {
+									case 0:
+										trafficItem
+												.setDirectionFrom(d[arrayIndex]
+														.trim());
+										break;
+									case 1:
+										trafficItem
+												.setDirectionTo(d[arrayIndex]
+														.trim());
+										break;
+									}
+								}
+								break;
+							} else {
+								trafficItem.setDirectionTo("");
+								trafficItem.setDirectionFrom("");
+							}
+						}
+					}
+
+					setInfo(trafficItem, description.toLowerCase());
 				}
 				node = node.getNextSibling();
 			}
@@ -177,18 +230,7 @@ public class TrafficService {
 						}
 					}
 
-					RegexConverter converter = RegexConverter.build(
-							RegexKeys.KILOMETER_KEY, summary.toLowerCase(),
-							"km", " ");
-					trafficItem.setKilometer(converter.getInteger());
-
-					converter = RegexConverter.build(RegexKeys.MAX_SPEED_KEY,
-							summary.toLowerCase(), "km/h", " ");
-					trafficItem.setMaxSpeed(converter.getInteger());
-
-					converter = RegexConverter.build(RegexKeys.DELAY_KEY,
-							summary.toLowerCase(), "minuten", " ");
-					trafficItem.setDelayMinutes(converter.getInteger());
+					setInfo(trafficItem, summary.toLowerCase());
 
 				}
 				if (node.getNodeName().equals("link")) {
@@ -213,4 +255,17 @@ public class TrafficService {
 		return result;
 	}
 
+	private void setInfo(TrafficItem trafficItem, String description) {
+		RegexConverter converter = RegexConverter.build(
+				RegexKeys.KILOMETER_KEY, description.toLowerCase(), "km", " ");
+		trafficItem.setKilometer(converter.getInteger());
+
+		converter = RegexConverter.build(RegexKeys.MAX_SPEED_KEY,
+				description.toLowerCase(), "km/h", " ");
+		trafficItem.setMaxSpeed(converter.getInteger());
+
+		converter = RegexConverter.build(RegexKeys.DELAY_KEY,
+				description.toLowerCase(), "minuten", " ");
+		trafficItem.setDelayMinutes(converter.getInteger());
+	}
 }

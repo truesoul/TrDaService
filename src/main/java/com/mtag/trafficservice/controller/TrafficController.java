@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mtag.traffic.model.TrafficData;
+import com.mtag.trafficservice.TrafficService.ServiceType;
 import com.mtag.trafficservice.model.BufferedTrafficService;
 import com.mtag.trafficservice.parser.ParseItem;
 import com.mtag.trafficservice.parser.Parser;
@@ -57,15 +58,28 @@ public class TrafficController {
 
 	@RequestMapping(value = "/restTrafficService")
 	public TrafficData RestTrafficService(
-			@RequestParam(value = "userInput", required = false, defaultValue = "") String userInput) {
+			@RequestParam(value = "userInput", required = false, defaultValue = "") String userInput,
+			@RequestParam(value = "serviceType", required = false, defaultValue = "") String serviceType) {
 		try {
 			Parser parser = new Parser();
 			List<ParseItem> input = parser.parseUserInput(userInput);
-			TrafficData data = parser.filter(
-					bufferedTrafficService.getTrafficData(), input);
+			TrafficData data = parser
+					.filter(bufferedTrafficService
+							.getTrafficData(getType(serviceType)), input);
 			return data;
 		} catch (XmlServiceException ex) {
 			return new TrafficData(ex);
 		}
+	}
+
+	private ServiceType getType(String service) {
+		ServiceType type = ServiceType.freiefahrt;
+		if (service != null && !service.isEmpty())
+			for (ServiceType t : ServiceType.values()) {
+				if (t.name().equalsIgnoreCase(service)) {
+					return t;
+				}
+			}
+		return type;
 	}
 }

@@ -23,53 +23,51 @@
  */
 package com.mtag.trafficservice.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.mtag.traffic.model.TrafficData;
 import com.mtag.trafficservice.TrafficService;
+import com.mtag.trafficservice.TrafficService.ServiceType;
 import com.mtag.trafficservice.tools.XmlServiceException;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author cwahlmann
  */
 public class BufferedTrafficService {
-    
-    @Autowired
-    private TrafficService trafficService;
 
-//    public TrafficService getTrafficService() {
-//        return trafficService;
-//    }
-//
-//    public void setTrafficService(TrafficService trafficService) {
-//        this.trafficService = trafficService;
-//    }
-    
-    
-    private TrafficData currentTrafficData;
-    private long expires;
-    private long timeLive;
+	@Autowired
+	private TrafficService trafficService;
 
-    public BufferedTrafficService() {
-        this(1000*60);
-    }
+	// public TrafficService getTrafficService() {
+	// return trafficService;
+	// }
+	//
+	// public void setTrafficService(TrafficService trafficService) {
+	// this.trafficService = trafficService;
+	// }
 
-    public BufferedTrafficService(long timeToLive) {
-        this.currentTrafficData = null;
-        this.expires = 0;
-        this.timeLive = timeToLive;
-    }
-    
-    public TrafficData getTrafficData() throws XmlServiceException
-    {
-        if (currentTrafficData == null
-                || System.currentTimeMillis()>=expires)
-        {
-            currentTrafficData = trafficService.requestFreiefahrtTraffic();
-            expires = System.currentTimeMillis()+timeLive;
-        }
-        return currentTrafficData;
-    }
-    
+	private TrafficData currentTrafficData;
+	private long expires;
+	private long timeLive;
+
+	public BufferedTrafficService() {
+		this(1000 * 60);
+	}
+
+	public BufferedTrafficService(long timeToLive) {
+		this.currentTrafficData = null;
+		this.expires = 0;
+		this.timeLive = timeToLive;
+	}
+
+	public TrafficData getTrafficData(ServiceType type)
+			throws XmlServiceException {
+		if (currentTrafficData == null || System.currentTimeMillis() >= expires) {
+			currentTrafficData = trafficService.requestTraffic(type);
+			expires = System.currentTimeMillis() + timeLive;
+		}
+		return currentTrafficData;
+	}
+
 }
