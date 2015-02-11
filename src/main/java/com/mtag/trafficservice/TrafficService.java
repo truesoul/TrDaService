@@ -23,13 +23,6 @@
  */
 package com.mtag.trafficservice;
 
-import com.mtag.traffic.model.TrafficData;
-import com.mtag.traffic.model.TrafficItem;
-import com.mtag.traffic.model.TrafficType;
-import com.mtag.trafficservice.model.TrafficTypeFilter;
-import com.mtag.trafficservice.tools.XmlServiceException;
-import com.mtag.trafficservice.tools.XmlTools;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,182 +32,169 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.mtag.traffic.model.TrafficData;
+import com.mtag.traffic.model.TrafficItem;
+import com.mtag.traffic.model.TrafficType;
+import com.mtag.trafficservice.model.TrafficTypeFilter;
+import com.mtag.trafficservice.tools.XmlServiceException;
+import com.mtag.trafficservice.tools.XmlTools;
+
 /**
  *
  * @author christian
  */
 public class TrafficService {
-    
-    public static enum ServiceType {wdr,freiefahrt};
-    public final static String wdrTrafficServiceUrl="http://www.wdr.de/verkehrslage/rss.xml";
-    public final static String wdrCopyright="www.wdr.de";
-    public final static String freiefahrtTrafficServiceUrl="http://www.freiefahrt.info/upload/lmst.de_DE.xml";
-    public final static String freieFahrtCopyright="www.freiefahrt.info";
 
-    public TrafficData requestTraffic(ServiceType type) throws XmlServiceException {
-        switch (type)
-        {
-            case freiefahrt:
-                return requestFreiefahrtTraffic();
-            case wdr:
-            default:
-                return requestWdrTraffic();
-        }
-    }
-    
-    public String getCopyright(ServiceType type)
-    {
-        switch (type)
-        {
-            case freiefahrt:
-                return freieFahrtCopyright;
-            case wdr:
-            default:
-                return wdrCopyright;
-        }        
-    }
-    
-    public TrafficData requestWdrTraffic() throws XmlServiceException {
-        TrafficData result = new TrafficData();
-        Document document = XmlTools.requestXmlService(wdrTrafficServiceUrl);
-        NodeList nodeList = document.getElementsByTagName("item");
-        for (int i=0; i<nodeList.getLength(); i++)
-        {
-            TrafficItem trafficItem = new TrafficItem();
-            Node node = nodeList.item(i).getFirstChild();
-            while (node!=null)
-            {
-                if (node.getNodeName().equals("title"))
-                {
-                    trafficItem.setStreet(node.getTextContent());
-                }
-                if (node.getNodeName().equals("description"))
-                {
-                    trafficItem.setDescription(
-                            node.getTextContent()
-                                    .trim().replace("<br />", " ")
-                                    .replace("  "," "));
-                }
-                node = node.getNextSibling();
-            }
-            result.addTrafficItem(trafficItem);
-        }
-        result.setCopyright(wdrCopyright);
-        return result;
-    }
+	public static enum ServiceType {
+		wdr, freiefahrt
+	};
 
-    private int parseNumber(String summary, String pattern)
-    {
-        int index=summary.toLowerCase().indexOf(pattern);
-        if (index>=0)
-        {
-            int index0=index-2;
-            while (index0>=0 && Character.isDigit(summary.charAt(index0)))
-            {
-                index0--;
-            }
-            if (Character.isDigit(summary.charAt(index0+1)))
-            {
-                String n=summary.substring(index0+1, index-1);
-                try {
-                    return new Integer(n);
-                }
-                catch (NumberFormatException ex) {
-                    System.out.println("Number format exception: ["+n+"]");
-                }
-            }
-        }
-        return -1;        
-    }
-    
-    public TrafficData requestFreiefahrtTraffic() throws XmlServiceException {
-        TrafficData result = new TrafficData();
-        Document document = XmlTools.requestXmlService(freiefahrtTrafficServiceUrl);
-        
-        NodeList nodesUpdated = document.getElementsByTagName("updated");
-        if (nodesUpdated.getLength()>0)
-        {
-            try {
-                Node node=nodesUpdated.item(0);
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-                Date date = format.parse(node.getTextContent());
-                result.setLastUpdated(date.getTime());
-            } catch (ParseException ex) {
-                throw new XmlServiceException("error parsing updated-tag in xml-file", ex);
-            }
-        }
-        
-        NodeList nodeList = document.getElementsByTagName("entry");
-        for (int i=0; i<nodeList.getLength(); i++)
-        {
-            TrafficItem trafficItem = new TrafficItem();
-            Node node = nodeList.item(i).getFirstChild();
-            while (node!=null)
-            {
-                if (node.getNodeName().equals("title"))
-                {
-//                    System.out.println(node.getTextContent());
-                    String[] its=node.getTextContent().split("\\:");
-                    trafficItem.setStreet(its.length>0?its[0].trim():"");
-                    if (its.length>1)
-                    {
-                        if (its[1].contains("Richtung"))
-                        {
-                            String[] d=its[1].split("Richtung");
-                            trafficItem.setDirection("Richtung "+d[d.length-1].trim());
-                        }
-                        else if (its[1].contains("-"))
-                        {
-                            String[] d=its[1].split("-");
-                            trafficItem.setDirection("Richtung "+d[d.length-1].trim());
-                        }
-                        else
-                        {
-                            trafficItem.setDirection(its[1].trim());
-                        }
-                    }
-                    else {
-                        trafficItem.setDirection("");
-                    }
-                }
-                if (node.getNodeName().equals("summary"))
-                {
-                    String summary=node.getTextContent().trim();
-                    trafficItem.setDescription(summary);
-                    trafficItem.setMaxSpeed(parseNumber(summary,"km/h"));
-                    trafficItem.setDelayMinutes(parseNumber(summary,"minuten"));
-                    trafficItem.setKilometer(parseNumber(summary,"km stau"));
-                    
-                    for (TrafficType type: TrafficType.values())
-                    {
-                        if (TrafficTypeFilter.matches(type, summary))
-                        {
-                            trafficItem.setType(type);
-                            break;
-                        }
-                    }
-                }
-                if (node.getNodeName().equals("link"))
-                {
-                    String[] its=node.getAttributes().getNamedItem("href").getTextContent().split("&");
-                    for (String it:its)
-                    {
-//                        System.out.println(it);
-                        if (it.startsWith("lon=") && it.length()>4)
-                        {
-                            trafficItem.setLongitude(new Double(it.substring(4)));
-                        }
-                        else if (it.startsWith("lat=") && it.length()>4)
-                        {
-                            trafficItem.setLatitude(new Double(it.substring(4)));
-                        }
-                    }
-                }
-                node = node.getNextSibling();
-            }
-            result.addTrafficItem(trafficItem);
-        }
-        result.setCopyright(freieFahrtCopyright);
-        return result;
-    }
+	public final static String wdrTrafficServiceUrl = "http://www.wdr.de/verkehrslage/rss.xml";
+	public final static String wdrCopyright = "www.wdr.de";
+	public final static String freiefahrtTrafficServiceUrl = "http://www.freiefahrt.info/upload/lmst.de_DE.xml";
+	public final static String freieFahrtCopyright = "www.freiefahrt.info";
+
+	public TrafficData requestTraffic(ServiceType type)
+			throws XmlServiceException {
+		switch (type) {
+		case freiefahrt:
+			return requestFreiefahrtTraffic();
+		case wdr:
+		default:
+			return requestWdrTraffic();
+		}
+	}
+
+	public String getCopyright(ServiceType type) {
+		switch (type) {
+		case freiefahrt:
+			return freieFahrtCopyright;
+		case wdr:
+		default:
+			return wdrCopyright;
+		}
+	}
+
+	public TrafficData requestWdrTraffic() throws XmlServiceException {
+		TrafficData result = new TrafficData();
+		Document document = XmlTools.requestXmlService(wdrTrafficServiceUrl);
+		NodeList nodeList = document.getElementsByTagName("item");
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			TrafficItem trafficItem = new TrafficItem();
+			Node node = nodeList.item(i).getFirstChild();
+			while (node != null) {
+				if (node.getNodeName().equals("title")) {
+					trafficItem.setStreet(node.getTextContent());
+				}
+				if (node.getNodeName().equals("description")) {
+					trafficItem.setDescription(node.getTextContent().trim()
+							.replace("<br />", " ").replace("  ", " "));
+				}
+				node = node.getNextSibling();
+			}
+			result.addTrafficItem(trafficItem);
+		}
+		result.setCopyright(wdrCopyright);
+		return result;
+	}
+
+	public TrafficData requestFreiefahrtTraffic() throws XmlServiceException {
+		TrafficData result = new TrafficData();
+		Document document = XmlTools
+				.requestXmlService(freiefahrtTrafficServiceUrl);
+
+		NodeList nodesUpdated = document.getElementsByTagName("updated");
+		if (nodesUpdated.getLength() > 0) {
+			try {
+				Node node = nodesUpdated.item(0);
+				DateFormat format = new SimpleDateFormat(
+						"yyyy-MM-dd'T'HH:mm:ssX");
+				Date date = format.parse(node.getTextContent());
+				result.setLastUpdated(date.getTime());
+			} catch (ParseException ex) {
+				throw new XmlServiceException(
+						"error parsing updated-tag in xml-file", ex);
+			}
+		}
+
+		NodeList nodeList = document.getElementsByTagName("entry");
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			TrafficItem trafficItem = new TrafficItem();
+			Node node = nodeList.item(i).getFirstChild();
+			while (node != null) {
+				if (node.getNodeName().equals("title")) {
+					// System.out.println(node.getTextContent());
+					String[] its = node.getTextContent().split("\\:");
+					trafficItem.setStreet(its.length > 0 ? its[0].trim() : "");
+					if (its.length > 1) {
+						if (its[1].contains("Richtung")) {
+							String[] d = its[1].split("Richtung");
+							for (int arrayIndex = 0; arrayIndex < d.length; arrayIndex++) {
+								switch (arrayIndex) {
+								case 0:
+									trafficItem.setDirectionFrom(d[arrayIndex]
+											.trim());
+									break;
+								case 1:
+									trafficItem.setDirectionTo(d[arrayIndex]
+											.trim());
+									break;
+								}
+							}
+						} else if (its[1].contains("-")) {
+							String[] d = its[1].split("-");
+							for (int arrayIndex = 0; arrayIndex < d.length; arrayIndex++) {
+								switch (arrayIndex) {
+								case 0:
+									trafficItem.setDirectionFrom(d[arrayIndex]
+											.trim());
+									break;
+								case 1:
+									trafficItem.setDirectionTo(d[arrayIndex]
+											.trim());
+									break;
+								}
+							}
+						} else {
+							trafficItem.setDirectionTo(its[1].trim());
+							trafficItem.setDirectionFrom(its[1].trim());
+						}
+					} else {
+						trafficItem.setDirectionTo("");
+						trafficItem.setDirectionFrom("");
+					}
+				}
+				if (node.getNodeName().equals("summary")) {
+					String summary = node.getTextContent().trim();
+					trafficItem.setDescription(summary);
+
+					for (TrafficType type : TrafficType.values()) {
+						if (TrafficTypeFilter.matches(type, summary)) {
+							trafficItem.setType(type);
+							break;
+						}
+					}
+				}
+				if (node.getNodeName().equals("link")) {
+					String[] its = node.getAttributes().getNamedItem("href")
+							.getTextContent().split("&");
+					for (String it : its) {
+						// System.out.println(it);
+						if (it.startsWith("lon=") && it.length() > 4) {
+							trafficItem
+									.setLongitude(new Double(it.substring(4)));
+						} else if (it.startsWith("lat=") && it.length() > 4) {
+							trafficItem
+									.setLatitude(new Double(it.substring(4)));
+						}
+					}
+				}
+				node = node.getNextSibling();
+			}
+			result.addTrafficItem(trafficItem);
+		}
+		result.setCopyright(freieFahrtCopyright);
+		return result;
+	}
+
 }

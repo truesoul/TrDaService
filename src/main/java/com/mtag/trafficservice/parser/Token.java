@@ -28,51 +28,43 @@ package com.mtag.trafficservice.parser;
  * @author cwahlmann
  */
 public enum Token {
-    TRAFFIC_JAM (TokenType.TYPE_SBST, "staus?"),
-    JAMMED (TokenType.TYPE_ADJ,"gestaut"),
-    SLOW_MOVING (TokenType.TYPE_ADJ,"stockend(er)?"),
-    ROADWORKS (TokenType.TYPE_SBST, "baustellen?", "straßenarbeiten"),
-    CLOSURE (TokenType.TYPE_SBST, "sperrung(en)?", "vollsperrung(en)?"),
-    CLOSED (TokenType.TYPE_ADJ, "gesperrt"),
-    PARTIAL_CLOSURE (TokenType.TYPE_SBST, "teilsperrung(en)?"),
-    PARTIAL (TokenType.TYPE_ADJ, "teils", "teil"),
-    DIRECTION (TokenType.TYPE_DIRECTION, "richtung"),
-    DANGER (TokenType.TYPE_SBST, "gefahr(en)?"),
-    AUTOBAHN (TokenType.TYPE_STREET, "a\\d+"),
-    BUNDESSTR (TokenType.TYPE_STREET, "b\\d+"),
-    COUNTRY (TokenType.TYPE_COUNTRY, Parser.countries.values().toArray(new String[1])),
-    OTHER (TokenType.TYPE_OTHER)
-    ;
-    
-    public static enum TokenType {
-        TYPE_SBST, TYPE_ADJ, TYPE_DIRECTION, TYPE_COUNTRY, TYPE_STREET, TYPE_OTHER
-    };
-    
-    private final TokenType type;
-    private final String[] keys;
-    
-    public final boolean matches(String key)
-    {
-        for (String k:keys)
-        {
-            if (key.toLowerCase().matches(k.toLowerCase()))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public TokenType getType()
-    {
-        return type;
-    }
-    
-    Token(TokenType type, String... keys)
-    {
-        this.type = type;
-        this.keys=keys;
-    }
-    
-    
+	TRAFFIC_JAM(TokenType.TYPE_SBST, "staus?"), JAMMED(TokenType.TYPE_ADJ,
+			"gestaut"), SLOW_MOVING(TokenType.TYPE_ADJ, "stockend(er)?"), ROADWORKS(
+			TokenType.TYPE_SBST, "baustellen?", "straßenarbeiten"), CLOSURE(
+			TokenType.TYPE_SBST, "sperrung(en)?", "vollsperrung(en)?"), CLOSED(
+			TokenType.TYPE_ADJ, "gesperrt"), PARTIAL_CLOSURE(
+			TokenType.TYPE_SBST, "teilsperrung(en)?"), PARTIAL(
+			TokenType.TYPE_ADJ, "teils", "teil"), DIRECTION_TO(
+			TokenType.TYPE_DIRECTION_TO, "richtung"), DIRECTION_FROM(
+			TokenType.TYPE_DIRECTION_FROM, "von"), DANGER(TokenType.TYPE_SBST,
+			"gefahr(en)?"), AUTOBAHN(TokenType.TYPE_STREET, "a\\d+"), BUNDESSTR(
+			TokenType.TYPE_STREET, "b\\d+"), COUNTRY(TokenType.TYPE_COUNTRY,
+			Parser.countries.values().toArray(new String[1])), OTHER(
+			TokenType.TYPE_OTHER);
+
+	public static enum TokenType {
+		TYPE_SBST, TYPE_ADJ, TYPE_DIRECTION_TO, TYPE_DIRECTION_FROM, TYPE_COUNTRY, TYPE_STREET, TYPE_OTHER
+	};
+
+	private final TokenType type;
+	private final String[] keys;
+
+	public final boolean matches(String key) {
+		for (String k : keys) {
+			if (key.toLowerCase().matches(k.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public TokenType getType() {
+		return type;
+	}
+
+	Token(TokenType type, String... keys) {
+		this.type = type;
+		this.keys = keys;
+	}
+
 }

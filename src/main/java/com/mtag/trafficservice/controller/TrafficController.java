@@ -23,13 +23,6 @@
  */
 package com.mtag.trafficservice.controller;
 
-import com.mtag.traffic.model.TrafficData;
-import com.mtag.trafficservice.model.BufferedTrafficService;
-import com.mtag.trafficservice.parser.ParseItem;
-import com.mtag.trafficservice.parser.Parser;
-import com.mtag.trafficservice.parser.TokenizedUserInput;
-import com.mtag.trafficservice.tools.XmlServiceException;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,35 +30,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mtag.traffic.model.TrafficData;
+import com.mtag.trafficservice.model.BufferedTrafficService;
+import com.mtag.trafficservice.parser.ParseItem;
+import com.mtag.trafficservice.parser.Parser;
+import com.mtag.trafficservice.tools.XmlServiceException;
+
 /**
  *
  * @author cwahlmann
  */
 @RestController
 public class TrafficController {
-    
-    @Autowired
-    private BufferedTrafficService bufferedTrafficService;
 
-    public BufferedTrafficService getBufferedTrafficService() {
-        return bufferedTrafficService;
-    }
+	@Autowired
+	private BufferedTrafficService bufferedTrafficService;
 
-    public void setBufferedTrafficService(BufferedTrafficService bufferedTrafficService) {
-        this.bufferedTrafficService = bufferedTrafficService;
-    }
-    
-    @RequestMapping(value="/restTrafficService")
-    public TrafficData RestTrafficService (
-            @RequestParam(value = "userInput", required=false, defaultValue = "") String userInput)
-    {
-        try {
-            Parser parser = new Parser();
-            List<TokenizedUserInput> input = parser.parseUserMultiInput(userInput);
-            TrafficData data = parser.filter(bufferedTrafficService.getTrafficData(),input);
-            return data;
-        } catch (XmlServiceException ex) {
-            return new TrafficData(ex);
-        }
-    }    
+	public BufferedTrafficService getBufferedTrafficService() {
+		return bufferedTrafficService;
+	}
+
+	public void setBufferedTrafficService(
+			BufferedTrafficService bufferedTrafficService) {
+		this.bufferedTrafficService = bufferedTrafficService;
+	}
+
+	@RequestMapping(value = "/restTrafficService")
+	public TrafficData RestTrafficService(
+			@RequestParam(value = "userInput", required = false, defaultValue = "") String userInput) {
+		try {
+			Parser parser = new Parser();
+			List<ParseItem> input = parser.parseUserInput(userInput);
+			TrafficData data = parser.filter(
+					bufferedTrafficService.getTrafficData(), input);
+			return data;
+		} catch (XmlServiceException ex) {
+			return new TrafficData(ex);
+		}
+	}
 }
