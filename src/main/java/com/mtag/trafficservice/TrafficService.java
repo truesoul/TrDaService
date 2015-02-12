@@ -32,9 +32,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mtag.traffic.model.TrafficData;
-import com.mtag.traffic.model.TrafficItem;
-import com.mtag.traffic.model.TrafficType;
+import com.mtag.trafficservice.model.TrafficData;
+import com.mtag.trafficservice.model.TrafficItem;
+import com.mtag.trafficservice.model.TrafficType;
 import com.mtag.trafficservice.model.TrafficTypeFilter;
 import com.mtag.trafficservice.parser.RegexConverter;
 import com.mtag.trafficservice.parser.RegexKeys;

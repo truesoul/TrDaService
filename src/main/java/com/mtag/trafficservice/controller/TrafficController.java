@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mtag.traffic.model.TrafficData;
 import com.mtag.trafficservice.TrafficService.ServiceType;
 import com.mtag.trafficservice.model.BufferedTrafficService;
+import com.mtag.trafficservice.model.TrafficData;
 import com.mtag.trafficservice.parser.ParseItem;
 import com.mtag.trafficservice.parser.Parser;
 import com.mtag.trafficservice.tools.XmlServiceException;

@@ -38,7 +38,5 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/security/spring-security-config/3.2.5.RELEASE/spring-security-config-3.2.5.RELEASE.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/security/spring-security-core/3.2.5.RELEASE/spring-security-core-3.2.5.RELEASE.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/security/spring-security-web/3.2.5.RELEASE/spring-security-web-3.2.5.RELEASE.jar"/>
-	<classpathentry kind="src" path="/TrafficApi"/>
-	<classpathentry kind="lib" path="TrafficApi-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
